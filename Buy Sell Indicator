@@ -1,0 +1,51 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class TradeSignal
+{
+    public DateTime Date { get; set; }
+    public string Signal { get; set; }
+}
+
+public class MACDIndicator
+{
+    public static List<TradeSignal> GetMACDSignals(List<double> prices, int shortPeriod = 12, int longPeriod = 26, int signalPeriod = 9)
+    {
+        var emaShort = GetEMA(prices, shortPeriod);
+        var emaLong = GetEMA(prices, longPeriod);
+        var macdLine = emaShort.Zip(emaLong, (shortEma, longEma) => shortEma - longEma).ToList();
+        var signalLine = GetEMA(macdLine, signalPeriod);
+        var macdHistogram = macdLine.Zip(signalLine, (macd, signal) => macd - signal).ToList();
+
+        var signals = new List<TradeSignal>();
+        for (int i = 1; i < macdHistogram.Count; i++)
+        {
+            if (macdHistogram[i] > 0 && macdHistogram[i - 1] <= 0)
+            {
+                signals.Add(new TradeSignal { Date = DateTime.Now.AddDays(i), Signal = "Buy" });
+            }
+            else if (macdHistogram[i] < 0 && macdHistogram[i - 1] >= 0)
+            {
+                signals.Add(new TradeSignal { Date = DateTime.Now.AddDays(i), Signal = "Sell" });
+            }
+        }
+
+        return signals;
+    }
+
+    private static List<double> GetEMA(List<double> prices, int period)
+    {
+        var ema = new List<double>();
+        double multiplier = 2.0 / (period + 1);
+        ema.Add(prices.Take(period).Average());
+
+        for (int i = period; i < prices.Count; i++)
+        {
+            double value = (prices[i] - ema.Last()) * multiplier + ema.Last();
+            ema.Add(value);
+        }
+
+        return ema;
+    }
+}

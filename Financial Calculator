@@ -1,0 +1,34 @@
+using System;
+
+namespace FinancialCalculator
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.Write("Enter loan amount: ");
+            double loanAmount = Convert.ToDouble(Console.ReadLine());
+
+            Console.Write("Enter annual interest rate (in %): ");
+            double annualInterestRate = Convert.ToDouble(Console.ReadLine()) / 100;
+
+            Console.Write("Enter loan period (in years): ");
+            int loanPeriod = Convert.ToInt32(Console.ReadLine());
+
+            double monthlyPayment = CalculateMonthlyPayment(loanAmount, annualInterestRate, loanPeriod);
+
+            Console.WriteLine($"Monthly Payment: {monthlyPayment:C}");
+        }
+
+        static double CalculateMonthlyPayment(double loanAmount, double annualInterestRate, int loanPeriod)
+        {
+            double monthlyInterestRate = annualInterestRate / 12;
+            int totalPayments = loanPeriod * 12;
+
+            double monthlyPayment = (loanAmount * monthlyInterestRate) / 
+                                    (1 - Math.Pow(1 + monthlyInterestRate, -totalPayments));
+
+            return monthlyPayment;
+        }
+    }
+}

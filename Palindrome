@@ -1,0 +1,37 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter a string to check if it's a palindrome: ");
+        string input = Console.ReadLine();
+        
+        if (IsPalindrome(input))
+        {
+            Console.WriteLine($"\"{input}\" is a palindrome.");
+        }
+        else
+        {
+            Console.WriteLine($"\"{input}\" is not a palindrome.");
+        }
+    }
+
+    static bool IsPalindrome(string str)
+    {
+        int min = 0;
+        int max = str.Length - 1;
+        
+        while (min < max)
+        {
+            if (char.ToLower(str[min]) != char.ToLower(str[max]))
+            {
+                return false;
+            }
+            min++;
+            max--;
+        }
+        
+        return true;
+    }
+}
